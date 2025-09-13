@@ -5,7 +5,7 @@ import { useProcessedList } from "../hooks/useProcessedList";
 import { formatList } from "../utils/formatters";
 
 const Results = ({ list }) => {
-  const [listType, setListType] = useState("none");
+  const [listType, setListType] = useState("bulleted");
   const [customPrefix, setCustomPrefix] = useState("");
   const [ProgrammingBrackets, setProgrammingBrackets] = useState("[]");
   const [checkedReverse, setCheckedReverse] = useState(false);
