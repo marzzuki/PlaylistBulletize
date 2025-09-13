@@ -9,6 +9,7 @@ import KofiWidget from "./components/KofiWidget";
 function App() {
   const [url, setUrl] = useState("");
   const [getPlaylistInfo, setPlaylistInfo] = useState([]);
+  const [playlistMeta, setPlaylistMeta] = useState(null);
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50">
@@ -19,6 +20,7 @@ function App() {
             handleUrlChange={setUrl}
             handlePlaylistInfo={setPlaylistInfo}
             playListInfo={getPlaylistInfo}
+            handlePlaylistMeta={setPlaylistMeta}
           />
           {getPlaylistInfo.length > 0 && (
             <div className="mt-12">

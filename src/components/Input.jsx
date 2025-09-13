@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
-const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
+const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo, handlePlaylistMeta }) => {
   const [text, setText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [isTop, setIsTop] = useState(false);
+  const [playlistMeta, setPlaylistMeta] = useState(null);
 
   const playlistRegex =
     /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?youtube\.com\/(?:playlist\?list=|watch\?v=\w+&list=)([a-zA-Z0-9_-]+)/;
@@ -25,22 +26,60 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
     }
   }, [text]);
 
+  const extractPlaylistId = (url) => {
+    // Try to extract playlist ID from various YouTube playlist URL formats
+    const match = url.match(/[?&]list=([a-zA-Z0-9_-]+)/);
+    return match ? match[1] : '';
+  };
+
   const handleChange = (e) => {
     setText(e.target.value);
     handleUrlChange(e.target.value);
+    setPlaylistMeta(null); // Reset meta on input change
+  };
+
+  const getPlaylistMeta = async (playlistId) => {
+    try {
+      const url = `https://www.googleapis.com/youtube/v3/playlists?part=snippet&id=${playlistId}&key=${import.meta.env.VITE_YOUTUBE_API_KEY}`;
+      const response = await axios.get(url);
+      const meta = response?.data?.items?.[0]?.snippet;
+      if (meta) {
+        const metaData = {
+          title: meta.title,
+          description: meta.description,
+          image: meta.thumbnails?.high?.url || meta.thumbnails?.default?.url || '',
+        };
+        setPlaylistMeta(metaData);
+        handlePlaylistMeta(metaData);
+      } else {
+        setPlaylistMeta(null);
+        handlePlaylistMeta(null);
+      }
+    } catch (e) {
+      setPlaylistMeta(null);
+      handlePlaylistMeta(null);
+    }
   };
 
   const getPlaylistData = async (nextPageToken, ct = 0) => {
     try {
       setIsLoading(true);
-      const url = `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${text.split("=")[1]
-        }&key=${import.meta.env.VITE_YOUTUBE_API_KEY
-        }&maxResults=50&part=snippet,id${nextPageToken ? `&pageToken=${nextPageToken}` : ""
-        }`;
-
+      const playlistId = extractPlaylistId(text);
+      if (!playlistId) {
+        setIsLoading(false);
+        setError('Invalid playlist URL');
+        setPlaylistMeta(null);
+        handlePlaylistMeta(null);
+        return;
+      }
+      if (ct === 0) {
+        await getPlaylistMeta(playlistId);
+      }
+      const url = `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${playlistId}` +
+        `&key=${import.meta.env.VITE_YOUTUBE_API_KEY}` +
+        `&maxResults=50&part=snippet,id${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`;
       const response = await axios.get(url);
       const playlistData = response?.data.items;
-
       setIsLoading(false);
       if (playlistData.length > 0) {
         handlePlaylistInfo((prev) => [...prev, ...playlistData]);
@@ -50,13 +89,14 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
         handlePlaylistInfo([]);
         setError("Playlist Not Found");
       }
-
       if (response.data.nextPageToken && ct < 100) {
         getPlaylistData(response.data.nextPageToken, ct + 1);
       }
     } catch (error) {
       setIsLoading(false);
       setError("An error occurred while fetching the playlist");
+      setPlaylistMeta(null);
+      handlePlaylistMeta(null);
     }
   };
 
@@ -127,11 +167,22 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
           ) : isLoading ? (
             <p className="text-sm animate-pulse">Fetching Playlist...</p>
           ) : playListInfo.length > 0 ? (
-            <p className="text-lg font-semibold text-indigo-600">
-              Found {playListInfo.length} videos in the playlist
-            </p>
+            <div className="mt-4 bg-indigo-50 border border-indigo-200 text-indigo-700 px-4 py-2 rounded-lg shadow-sm">
+              <div className="flex flex-col items-center">
+                <span className="text-2xl mb-2">🎉</span>
+                <span>
+                  <span className="font-bold">{playListInfo.length}</span> videos found in {playlistMeta && (<span className="font-bold">{playlistMeta.title}</span>)}
+                </span>
+                {playlistMeta.description && (
+                  <div className="text-sm text-gray-500 mt-1 max-w-xs text-center line-clamp-3">
+                    {playlistMeta.description}
+                  </div>
+                )}
+              </div>
+            </div>
           ) : null}
         </div>
+
       </div>
       <Toaster
         position="bottom-center"
@@ -144,7 +195,7 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo }) => {
           },
         }}
       />
-    </div>
+    </div >
   );
 };
 
