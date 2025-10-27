@@ -17,6 +17,9 @@ const ApiKeyInput = ({ onApiKeyChange }) => {
     const newApiKey = e.target.value;
     setApiKey(newApiKey);
     
+    // Note: API key is stored in clear text in localStorage by design.
+    // This is necessary to send it to YouTube API for authentication.
+    // The user is informed that the key is stored locally.
     // Save to localStorage
     if (newApiKey.trim()) {
       localStorage.setItem("userYouTubeApiKey", newApiKey.trim());
