@@ -4,7 +4,7 @@ import { useVideoDetails } from "../hooks/useVideoDurations";
 import { useProcessedList } from "../hooks/useProcessedList";
 import { formatList } from "../utils/formatters";
 
-const Results = ({ list, playlistMeta }) => {
+const Results = ({ list, playlistMeta, customApiKey }) => {
   const [listType, setListType] = useState("bulleted");
   const [customPrefix, setCustomPrefix] = useState("");
   const [ProgrammingBrackets, setProgrammingBrackets] = useState("[]");
@@ -19,7 +19,7 @@ const Results = ({ list, playlistMeta }) => {
   const [showChannelName, setShowChannelName] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const videoDetails = useVideoDetails(list);
+  const videoDetails = useVideoDetails(list, customApiKey);
   const processedList = useProcessedList(list, {
     checkedRemovePriv,
     checkedRemoveDuplicates,

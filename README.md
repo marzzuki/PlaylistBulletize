@@ -85,6 +85,16 @@ https://github.com/user-attachments/assets/8d96cf44-1abe-43e7-8316-052a84e9b6cd
 
 Youtube Bulletize is a website that offers a convenient way to convert your Youtube playlists into a formatted list of video names. With just a few clicks, you can take your playlist and turn it into a list that is easy to copy, paste and share. Whether you want a simple bulleted list or a numbered one, Youtube Bulletize has you covered with its customizable options. Whether you're looking to share a playlist with a friend, or need to keep track of your favorite videos, Youtube Bulletize is the perfect solution.
 
+### Accessing Private Playlists
+
+By default, PlaylistBulletize can only access public YouTube playlists. To access your **private playlists**, you can provide your own YouTube API key directly in the application:
+
+1. **Get a YouTube API Key**: Follow [this tutorial](https://blog.hubspot.com/website/how-to-get-youtube-api-key) to create a YouTube Data API v3 key from the Google Cloud Console
+2. **Add Your API Key**: On the main page, click "Add Custom API Key" and paste your API key
+3. **Access Private Playlists**: Your custom API key will be used to access your private playlists
+
+**Privacy Note**: Your API key is stored locally in your browser using localStorage and is never sent to our servers. It's only used to make direct API calls to YouTube on your behalf.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
