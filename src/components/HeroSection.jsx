@@ -1,10 +1,13 @@
 import Input from "./Input";
+import ApiKeyInput from "./ApiKeyInput";
 
 const HeroSection = ({
     handleUrlChange,
     handlePlaylistInfo,
     playListInfo,
     handlePlaylistMeta,
+    customApiKey,
+    onApiKeyChange,
 }) => {
     return (
         <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
@@ -36,8 +39,11 @@ const HeroSection = ({
                         handlePlaylistInfo={handlePlaylistInfo}
                         playListInfo={playListInfo}
                         handlePlaylistMeta={handlePlaylistMeta}
+                        customApiKey={customApiKey}
                         disableAutoMargin
                     />
+
+                    <ApiKeyInput onApiKeyChange={onApiKeyChange} />
 
                     <div className="grid md:grid-cols-3 gap-6 mt-10 max-w-3xl mx-auto">
                         {[{

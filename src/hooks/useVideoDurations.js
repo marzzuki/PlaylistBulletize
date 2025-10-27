@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export const useVideoDetails = (list) => {
+export const useVideoDetails = (list, customApiKey) => {
   const [videoDetails, setVideoDetails] = useState({});
 
   useEffect(() => {
@@ -19,12 +19,12 @@ export const useVideoDetails = (list) => {
       }
 
       const detailsMap = {};
+      const apiKey = customApiKey || import.meta.env.VITE_YOUTUBE_API_KEY;
       for (const chunk of chunks) {
         try {
           const response = await fetch(
             `https://www.googleapis.com/youtube/v3/videos?` +
-            `id=${chunk.join(",")}&part=contentDetails,snippet&key=${import.meta.env.VITE_YOUTUBE_API_KEY
-            }`
+            `id=${chunk.join(",")}&part=contentDetails,snippet&key=${apiKey}`
           );
           const data = await response.json();
 
@@ -44,7 +44,7 @@ export const useVideoDetails = (list) => {
     if (list.length > 0) {
       fetchDetails();
     }
-  }, [list]);
+  }, [list, customApiKey]);
 
   return videoDetails;
 };

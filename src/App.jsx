@@ -11,6 +11,7 @@ function App() {
   const [url, setUrl] = useState("");
   const [getPlaylistInfo, setPlaylistInfo] = useState([]);
   const [playlistMeta, setPlaylistMeta] = useState(null);
+  const [customApiKey, setCustomApiKey] = useState("");
   const resultsRef = useRef(null);
 
   useEffect(() => {
@@ -33,11 +34,13 @@ function App() {
           handlePlaylistInfo={setPlaylistInfo}
           playListInfo={getPlaylistInfo}
           handlePlaylistMeta={setPlaylistMeta}
+          customApiKey={customApiKey}
+          onApiKeyChange={setCustomApiKey}
         />
         <div ref={resultsRef} className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {getPlaylistInfo.length > 0 && (
             <div className="mt-12">
-              <Results list={getPlaylistInfo} playlistMeta={playlistMeta} />
+              <Results list={getPlaylistInfo} playlistMeta={playlistMeta} customApiKey={customApiKey} />
             </div>
           )}
         </div>

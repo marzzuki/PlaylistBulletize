@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
-const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo, handlePlaylistMeta, disableAutoMargin = false }) => {
+const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo, handlePlaylistMeta, customApiKey, disableAutoMargin = false }) => {
   const [text, setText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -40,7 +40,8 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo, handlePlayli
 
   const getPlaylistMeta = async (playlistId) => {
     try {
-      const url = `https://www.googleapis.com/youtube/v3/playlists?part=snippet&id=${playlistId}&key=${import.meta.env.VITE_YOUTUBE_API_KEY}`;
+      const apiKey = customApiKey || import.meta.env.VITE_YOUTUBE_API_KEY;
+      const url = `https://www.googleapis.com/youtube/v3/playlists?part=snippet&id=${playlistId}&key=${apiKey}`;
       const response = await axios.get(url);
       const meta = response?.data?.items?.[0]?.snippet;
       if (meta) {
@@ -75,8 +76,9 @@ const Input = ({ handleUrlChange, handlePlaylistInfo, playListInfo, handlePlayli
       if (ct === 0) {
         await getPlaylistMeta(playlistId);
       }
+      const apiKey = customApiKey || import.meta.env.VITE_YOUTUBE_API_KEY;
       const url = `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${playlistId}` +
-        `&key=${import.meta.env.VITE_YOUTUBE_API_KEY}` +
+        `&key=${apiKey}` +
         `&maxResults=50&part=snippet,id${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`;
       const response = await axios.get(url);
       const playlistData = response?.data.items;
