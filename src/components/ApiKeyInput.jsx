@@ -11,7 +11,7 @@ const ApiKeyInput = ({ onApiKeyChange }) => {
       setApiKey(savedApiKey);
       onApiKeyChange(savedApiKey);
     }
-  }, []);
+  }, [onApiKeyChange]);
 
   const handleApiKeyChange = (e) => {
     const newApiKey = e.target.value;
